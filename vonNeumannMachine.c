@@ -18,6 +18,7 @@ int running = 0;
 
 void printPCStatus();
 
+void read();
 void fetch();
 void decode();
 void execute();
@@ -75,6 +76,8 @@ int main() {
         
     } while (running == 0);
 }
+
+void read();
 
 void printPCStatus() {
     /*==============================[ CPU ]==============================

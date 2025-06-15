@@ -1,27 +1,6 @@
-
-- BUSCA
-O problema é descobrir quantos bytes copiar da memoria para o MBR
-pois temos instruções de 1, 2 ou 3 bytes; por isso, vamos precisar
-identificar o opcode antes e copiar de acordo com o tamanho da operação
-
-Sabemos que: 
- 1 byte: hlt(0), nop(1), not (13) - (0, 1 e 13)
- 2 bytes: ldr (2), str (3), add(4), sub(5), mul(6), div(7), cmp(8), movrr(9), and(10), or(11), xor (12) - de 2 a 12
- 3 bytes: demais instruções de opcode > 13
-
-Modificamos os registradores:
-    PC: indica o endereço da proxima instrução/dado ao MAR
-    MAR: indica ao MBR onde coletar a instrução
-    MBR: copia a instrução inteira, que pode ocupar 1, 2 ou 3 bytes
-    IR: armazena o operation code
-
-DECODIFICA 
-Preenchemos os registradores que serão usados na execução. Isso vai dependender de cada instrução,
-mas de maneira geral, temos que, pelo ir:
-
-0: nenhum registador é alterado e o programa acaba
-1: o registrador pc é incrementado em 1
-2 - 12: instruções que alteram o conteudo dos dois registradores
-13: ?
-14 a 20: instruções que alteram o conteudo de MAR
-restante: instruções que possuem 1 registrador e alteram o conteudo de MAR
+ld r0, 1E
+ld r1, 20
+add r0, r1
+addi r0, 20
+st r0, 22
+htl
