@@ -1,0 +1,56 @@
+para o programa:
+
+programa        binario                         hex
+ld r0, 1E       1010 1000 0000 0000 0001 1110   A8 00 1E // mer[1E] = 0xF
+ld r1, 20       1010 1010 0000 0000 0010 0000   AA 00 20 // mer[20] = 0x8
+add r0, r1      0010 0000 1000 0000             20 80
+addi r0, 20     1100 0000 0000 0000 0001 0100   C0 00 14
+st r0, 22       1011 0000 0000 0000 0010 0010   B0 00 22
+htl             0000 0000                       00 00
+
+ld r0, 1E      
+ld r1, 20       
+add r0, r1     
+addi r0, 20     
+st r0, 22       
+htl            
+
+a cpu possui os seguintes estadoos, a cada ciclo de instrução
+
+ciclo 0: ld r0, 1E
+R0: F     R1:        R2:     R3:
+MBR:F     MAR: 1F    IMM:    PC: 3
+IR: 15    RO0: 0     RO1:
+E:        L:         G:
+
+ciclo 2: ld r1, 20 
+R0: F     R1: 8      R2:     R3:
+MBR: 8    MAR: 21    IMM:    PC: 6
+IR: 15    RO0: 1     RO1:
+E:        L:         G:
+
+ciclo 3: add r0, r1
+R0: 17    R1: 8      R2:     R3:
+MBR:2080  MAR: 8     IMM:    PC: 8
+IR: 4     RO0: 0     RO1: 1
+E:        L:         G:
+
+ciclo 4: addi r0, 20 // esse 20 é decimal mesmo... deveria ser hex?
+R0: 2B       R1: 8      R2:        R3:
+MBR: C00014  MAR: A     IMM: 14    PC: B
+IR: 18       RO0: 0     RO1: 1
+E:           L:         G:
+
+ciclo 5: st r0, 22 // esse 22 é hex...
+R0: 2B       R1: 8      R2:        R3:
+MBR: 2B      MAR: 23    IMM: 14    PC: E
+IR: 16       RO0: 0     RO1: 1
+E:           L:         G:
+
+ciclo 6: htl
+R0: 2B       R1: 8      R2:        R3:
+MBR: 0       MAR: F    IMM: 14    PC: E
+IR: 0        RO0: 0     RO1: 1
+E:           L:         G:
+
+-> NA ESCRITA DE INSTRUÇÕES, O VALOR PASSADO É REPRESENTADO EM BINARIO OU HEXADECIMAL? 
