@@ -2,6 +2,8 @@
 #include <conio.h> 
 #include <stdlib.h>
 
+#include "assembler.h"
+
 unsigned char memory[154] = {0};
 unsigned int mbr = 0; // Memory Buffer Register
 unsigned short int mar = 0; // Memory Address Register
@@ -18,42 +20,19 @@ int running = 0;
 
 void printPCStatus();
 
-void read();
 void fetch();
 void decode();
 void execute();
 
-int main() {
-    
-    memory[0] = 0xA8;
-    memory[1] = 0x00;
-    memory[2] = 0x1E;
-
-    memory[3] = 0xAA;
-    memory[4] = 0x00;
-    memory[5] = 0x20;
-
-    memory[6] = 0x20;
-    memory[7] = 0x80;
-
-    memory[8] = 0xC0;
-    memory[9] = 0x00;
-    memory[10] = 0x14;
-
-    memory[11] = 0xB0;
-    memory[12] = 0x00;
-    memory[13] = 0x22;
-
-    memory[14] = 0x00;
-    memory[15] = 0x00;
-
-    memory[30] = 0x00;
-    memory[31] = 0x0f;
-
-    memory[32] = 0x00;
-    memory[33] = 0x08;
-
-    
+int main(int argc, char **argv) {
+    if (argc == 1) {
+        printf("Error: No input file specified. Please provide the filename as a command-line argument.\n");
+        printf("Press Enter to exit...\n");
+        getchar();
+        exit(1);
+        return 1;
+    }
+    loadProgram(argv[1], memory);
 
     do {
         fetch();
@@ -67,6 +46,7 @@ int main() {
             scanf("%c", &r);
             if (r == 'y' || r == 'Y') {
                 running = 0;
+                pc = 0;
                     printf("\n\nPressione uma tecla para iniciar o proximo ciclo da maquina "
                     "ou aperte CTRL + C para finalizar a execucao do programa.");
             }
@@ -76,8 +56,6 @@ int main() {
         
     } while (running == 0);
 }
-
-void read();
 
 void printPCStatus() {
     /*==============================[ CPU ]==============================

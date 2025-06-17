@@ -2,22 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 
-void read(char *filename);
+void loadProgram(char *filename, unsigned char *memory);
 int getOpcode(char *mnemonic);
 
-unsigned char memory[154] = {0};
 
-// argc: will be the count of input arguments to your program
-// argv: will be a pointer to all the input arguments
-int main(int argc, char **argv) {
-    if (argc == 1) {
-        printf("Ohh nooo la politiza");
-        return 0;
-    }
-    read(argv[1]);
-}
-
-void read(char *filename) {
+void loadProgram(char *filename, unsigned char *memory) {
     FILE* program;
     program = fopen(filename, "r");
     if (program == NULL) {

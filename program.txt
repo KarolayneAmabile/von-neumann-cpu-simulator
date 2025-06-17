@@ -1,6 +1,0 @@
-0;i;lde r0, 1E       
-3;i;ld r1, 20       
-6;i;add r0, r1      
-8;i;addi r0, 14     
-b;i;st r0, 22       
-e;i;hlt             
