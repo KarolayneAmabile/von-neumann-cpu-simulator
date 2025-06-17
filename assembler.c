@@ -4,7 +4,6 @@
 
 void read(char *filename);
 int getOpcode(char *mnemonic);
-void printMem();
 
 unsigned char memory[154] = {0};
 
@@ -16,20 +15,21 @@ int main(int argc, char **argv) {
         return 0;
     }
     read(argv[1]);
-    printMem();
 }
 
 void read(char *filename) {
     FILE* program;
     program = fopen(filename, "r");
     if (program == NULL) {
-        printf("Houve um problema na leitura do aquivo.");
-        return;
+        printf("Error: Could not open file \"%s\" for reading.\n", filename);
+        printf("Press Enter to exit...\n");
+        getchar();
+        exit(1);
     }
 
     char str[100];
-    char *tokens[5]; // posicaoNaMemoria;dadoOuInstrucao;palavra
-    char error[100]; // para exibir mensagem de erro
+    char *tokens[5];
+    char error[100];
     int line = 0;
     int memoryAddress = 0;
     int word = 0;
@@ -45,31 +45,25 @@ void read(char *filename) {
         }        
 
         memoryAddress = (int)strtol(tokens[0], NULL, 16);
-        if (strcmp(tokens[1], "d") == 0) { // data
+
+        if (strcmp(tokens[1], "d") == 0) { 
             int data = (int)strtol(tokens[2], NULL, 16);
             memory[memoryAddress] = data >> 8;
             memory[++memoryAddress] = data & 0xff;
-            
-            
-            
-        } else if (strcmp(tokens[1], "i") == 0) { // instrucions
+        } else if (strcmp(tokens[1], "i") == 0) { 
             word = getOpcode(tokens[2]);
             if (word == 0) { 
                 memory[memoryAddress] = 0;
             } else if (word == 1) {
                 memory[memoryAddress] = 1;
             } else if (word >= 2 && word <= 12) {
-                // 0000 0000 000X XXXX
                 word = word << 2;
-                // 0000 0000 0XXX XX00
+
                 int rX = atoi(tokens[3] + 1);
                 word = (word | rX) << 2;
-                // 0000 0000 0XXX XXYY
-                // 0000 000X XXXX YY00
+
                 int rY = atoi(tokens[4] + 1);
                 word = (word | rY) << 7;
-                // 0000 000X XXXX YYZZ
-                // XXXX XYYZ Z000 0000
 
                 memory[memoryAddress] = word >> 8;
                 memory[++memoryAddress] = word & 0xff;
@@ -89,8 +83,6 @@ void read(char *filename) {
                 memory[memoryAddress] = word >> 16;
                 memory[++memoryAddress] = (word & 0xff00) >> 8;
                 memory[++memoryAddress] = (word & 0xff);
-                // c0 0 20
-                // c 0 22
             } else if (word >= 21 && word <= 29) {
                 word = word << 2;
 
@@ -106,13 +98,17 @@ void read(char *filename) {
 
             } else {
                 printf("Syntax error on line: %i - %s", line, error);
-                printf("Unknown instruction. Check the language documentation for valid instructions.\n");
-                return;
+                printf("Unknown instruction \"%s\". Check the language documentation for valid instructions.\n", tokens[2]);
+                printf("Press Enter to exit...\n");
+                getchar();
+                exit(1);
             }
         } else {
             printf("Syntax error on line: %i - %s", line, error);
             printf("Invalid type \"%s\". Only \"i\" (instruction) or \"d\" (data) are allowed.\n", tokens[1]);
-            return;
+            printf("Press Enter to exit...\n");
+            getchar();
+            exit(1);
         }
         line++;
     }
@@ -157,13 +153,3 @@ int getOpcode(char *mnemonic) {
     return -1;
 }
 
-void printMem() {
-    for (int i = 0; i < 20; i++) {
-        printf("%X\n", memory[i]);
-    }
-}
-// A8 00 1E
-// AA 00 20
-// 20 80
-// C0 00 14
-// B0 00 22
