@@ -3,6 +3,8 @@
 #include <string.h>
 
 void read(char *filename);
+int getOpcode(char *mnemonic);
+void printMem();
 
 unsigned char memory[154] = {0};
 
@@ -14,6 +16,7 @@ int main(int argc, char **argv) {
         return 0;
     }
     read(argv[1]);
+    printMem();
 }
 
 void read(char *filename) {
@@ -42,103 +45,75 @@ void read(char *filename) {
         }        
 
         memoryAddress = (int)strtol(tokens[0], NULL, 16);
-        // o array tokens possui cada pedaço da instrucao armazenado agora
-        // 0;i;ld r0, 96
-        // tokens[0] = posicao na memoria
-        // tokens[1] = se é dado ou instrucao
-        // para dado        tokens[2] = dado
-        // para instrucao   tokens[2] = opcode
-        if (strcmp(tokens[1], "d") == 0) { // yep, funciona perfeitamente pra dados
+        if (strcmp(tokens[1], "d") == 0) { // data
             int data = (int)strtol(tokens[2], NULL, 16);
-
             memory[memoryAddress] = data >> 8;
             memory[++memoryAddress] = data & 0xff;
-            //
-            //
-            //
-        } else if (strcmp(tokens[1], "i") == 0) {
-            if (strcmp(tokens[2], "hlt") == 0) { 
+            
+            
+            
+        } else if (strcmp(tokens[1], "i") == 0) { // instrucions
+            word = getOpcode(tokens[2]);
+            if (word == 0) { 
                 memory[memoryAddress] = 0;
-            } else if (strcmp(tokens[2], "nop") == 0) {
+            } else if (word == 1) {
                 memory[memoryAddress] = 1;
+            } else if (word >= 2 && word <= 12) {
+                // 0000 0000 000X XXXX
+                word = word << 2;
+                // 0000 0000 0XXX XX00
+                int rX = atoi(tokens[3] + 1);
+                word = (word | rX) << 2;
+                // 0000 0000 0XXX XXYY
+                // 0000 000X XXXX YY00
+                int rY = atoi(tokens[4] + 1);
+                word = (word | rY) << 7;
+                // 0000 000X XXXX YYZZ
+                // XXXX XYYZ Z000 0000
 
-
-
-            } else if (strcmp(tokens[2], "ldr") == 0) {
-                word = 2 << 2;
-                word = (word | atoi(tokens[3] + 1)) << 2;
-                word = (word | atoi(tokens[4] + 1)) << 7;
                 memory[memoryAddress] = word >> 8;
                 memory[++memoryAddress] = word & 0xff;
 
-            } else if (strcmp(tokens[2], "str") == 0) {
-                word = 3 << 2;
-            } else if (strcmp(tokens[2], "add") == 0) {
-                word = 4 << 2;
-            } else if (strcmp(tokens[2], "sub") == 0) {
-                word = 5 << 2;
-            } else if (strcmp(tokens[2], "mul") == 0) {
-                word = 6 << 2;
-            } else if (strcmp(tokens[2], "div") == 0) {
-                word = 7 << 2;
-            } else if (strcmp(tokens[2], "cmp") == 0) {
-                word = 8 << 2;
-            } else if (strcmp(tokens[2], "movrr") == 0) {
-                word = 9 << 2;
-            } else if (strcmp(tokens[2], "and") == 0) {
-                word = 10 << 2;
-            } else if (strcmp(tokens[2], "or") == 0) {
-                word = 11 << 2;
-            } else if (strcmp(tokens[2], "xor") == 0) {
-                word = 12 << 2;
-            
+            } else if (word == 13) {
+                word = word << 2;
+                int reg = atoi(tokens[3] + 1);
+                word = (word | reg) << 1;
+                memory[memoryAddress] = word;
 
+            } else if (word >= 14 && word <= 20) {
+                word = word << 19;
 
+                int address = (int)strtol(tokens[3], NULL, 16);
+                word = word | address;
 
+                memory[memoryAddress] = word >> 16;
+                memory[++memoryAddress] = (word & 0xff00) >> 8;
+                memory[++memoryAddress] = (word & 0xff);
+                // c0 0 20
+                // c 0 22
+            } else if (word >= 21 && word <= 29) {
+                word = word << 2;
 
-                
-            } else if (strcmp(tokens[2], "nop") == 0) {
-                
-            } else if (strcmp(tokens[2], "div") == 0) {
-                
-            } else if (strcmp(tokens[2], "div") == 0) {
-                
-            } else if (strcmp(tokens[2], "div") == 0) {
-                
-            } else if (strcmp(tokens[2], "div") == 0) {
-                
-            } else if (strcmp(tokens[2], "div") == 0) {
-                
-            } else if (strcmp(tokens[2], "div") == 0) {
-                
-            } else if (strcmp(tokens[2], "div") == 0) {
-                
-            } else if (strcmp(tokens[2], "div") == 0) {
-                
-            } else if (strcmp(tokens[2], "div") == 0) {
-                
-            } else if (strcmp(tokens[2], "div") == 0) {
-                
-            } else if (strcmp(tokens[2], "div") == 0) {
-                
-            } else if (strcmp(tokens[2], "div") == 0) {
-                
-            } else if (strcmp(tokens[2], "div") == 0) {
-                
+                int reg = atoi(tokens[3] + 1);
+                word = (word | reg) << 17;                  
+
+                int immOrAdd = (int)strtol(tokens[4], NULL, 16);  
+                word = word | immOrAdd;                           
+
+                memory[memoryAddress] = word >> 16;
+                memory[++memoryAddress] = (word & 0xff00) >> 8;
+                memory[++memoryAddress] = (word & 0xff);
+
             } else {
-                //
+                printf("Syntax error on line: %i - %s", line, error);
+                printf("Unknown instruction. Check the language documentation for valid instructions.\n");
+                return;
             }
-        //
-        //
-        //
-        //
         } else {
-            //"Erro: tipo inválido \"%s\". Apenas \"i\" (instrução) ou \"d\" (dado) são permitidos.\n", tokens[1])
             printf("Syntax error on line: %i - %s", line, error);
             printf("Invalid type \"%s\". Only \"i\" (instruction) or \"d\" (data) are allowed.\n", tokens[1]);
             return;
         }
-
         line++;
     }
     fclose(program);
@@ -172,7 +147,6 @@ int getOpcode(char *mnemonic) {
 
     if (strcmp(mnemonic, "ld") == 0) return 21;
     if (strcmp(mnemonic, "st") == 0) return 22;
-
     if (strcmp(mnemonic, "movi") == 0) return 23;
     if (strcmp(mnemonic, "addi") == 0) return 24;
     if (strcmp(mnemonic, "subi") == 0) return 25;
@@ -180,4 +154,16 @@ int getOpcode(char *mnemonic) {
     if (strcmp(mnemonic, "divi") == 0) return 27;
     if (strcmp(mnemonic, "lsh") == 0) return 28;
     if (strcmp(mnemonic, "rsh") == 0) return 29;
+    return -1;
 }
+
+void printMem() {
+    for (int i = 0; i < 20; i++) {
+        printf("%X\n", memory[i]);
+    }
+}
+// A8 00 1E
+// AA 00 20
+// 20 80
+// C0 00 14
+// B0 00 22
