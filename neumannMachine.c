@@ -1,6 +1,7 @@
 #include <stdio.h> 
 #include <conio.h> 
 #include <stdlib.h>
+#include <string.h>
 
 #include "assembler.h"
 
@@ -15,8 +16,7 @@ unsigned short int imm = 0; // Immediate
 unsigned short int pc = 0; // Program Counter
 unsigned char e = 0, l = 0, g = 0; // ‘equal to’, ‘lower than’ and ‘greater than’
 
-unsigned short int reg[4]; // General purpose registers
-// r0 : 00 | r1 : 01 | r2 : 10 | r3 : 11
+unsigned short int reg[4] = {0};// General purpose registers
 
 int running = 0;
 
@@ -26,16 +26,21 @@ void execute();
 
 void displayCPUStatus();
 
-int main(int argc, char **argv) {
+int main(void) {
     
-    if (argc == 1) {
-        printf("Error: No input file specified. Please provide the filename as a command-line argument.\n");
-        printf("Usage: ./program <filename>. Press Enter to exit...\n");
+    char filename[300];
+    printf("Please type the name of the .txt file: ");
+    fgets(filename, 300, stdin);
+
+    if (filename[0] == '\n') {
+        printf("Error: No input file provided. Please enter a valid filename next time.\n");
+        printf("Press Enter to exit...\n");
         getchar();
         exit(1);
-        return 1;
+
     }
-    loadProgram(argv[1], memory);
+    filename[strcspn(filename, "\n")] = 0;
+    loadProgram(filename, memory);
 
     do {
         fetch();
@@ -218,9 +223,9 @@ void execute() {
 void displayCPUStatus() {
     char *screen[] = {
     "| ________________________________________________________________________________|",
-    "|                               CPU SIMULATOR                                     |",
-    "|                                 REGISTERS                                       |",
-    "|                                MAIN MEMORY                                      |",
+    "|                                  CPU SIMULATOR                                  |",
+    "|                                    REGISTERS                                    |",
+    "|                                   MAIN MEMORY                                   |",
     "|                  Press any key to start the next machine cycle                  |",
     "|                           or press CTRL + C to exit.                            |"
     };
@@ -240,11 +245,12 @@ void displayCPUStatus() {
 
     printf("%s\n%s\n%s\n", screen[0], screen[3], screen[0]);
 
-    for (int i = 0, j = 7; i < SIZE; i++) {
+    int qtd = 11;
+    for (int i = 0; i < SIZE; i++) {
         printf("|%*i:%*X ", 3, i, 4, memory[i]);
-        if (i == j) {
+        if (i == qtd - 1) {
             printf("  |\n");
-            j += 8;
+            qtd += 11;
         }
     }
     printf("\n%s\n%s\n%s\n%s\n", screen[0], screen[4], screen[5], screen[0]);

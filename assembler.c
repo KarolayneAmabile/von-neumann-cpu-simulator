@@ -11,7 +11,7 @@ void loadProgram(char *filename, unsigned char *memory) {
     program = fopen(filename, "r");
     if (program == NULL) {
         printf("Error: Could not open file \"%s\" for reading.\n", filename);
-        printf("Press Enter to exit...\n");
+        printf("Please make sure the provided file is a .txt file. Press Enter to exit...\n");
         getchar();
         exit(1);
     }
