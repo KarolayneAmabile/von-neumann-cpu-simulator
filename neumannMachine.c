@@ -24,13 +24,19 @@ void fetch();
 void decode();
 void execute();
 
+void display();
 void displayCPUStatus();
 
-int main(void) {
+
+int main(int argc, char **argv) {
     
     char filename[300];
-    printf("Please type the name of the .txt file: ");
-    fgets(filename, 300, stdin);
+    if (argc == 1) {
+        printf("Please type the name of the .txt file: ");
+        fgets(filename, 300, stdin);
+    } else {
+        strcpy(filename, argv[1]);
+    }
 
     if (filename[0] == '\n') {
         printf("Error: No input file provided. Please enter a valid filename next time.\n");
@@ -220,31 +226,28 @@ void execute() {
     }
 }
 
-void displayCPUStatus() {
+void display() {
     char *screen[] = {
-    "| ________________________________________________________________________________|",
-    "|                                  CPU SIMULATOR                                  |",
-    "|                                    REGISTERS                                    |",
-    "|                                   MAIN MEMORY                                   |",
-    "|                  Press any key to start the next machine cycle                  |",
-    "|                           or press CTRL + C to exit.                            |"
+    "|_______________________________________________________________________________________________________________|",
+    "|_________________________________________________CPU SIMULATOR_________________________________________________|",
+    "|___________________________________________________REGISTERS___________________________________________________|",
+    "|__________________________________________________MAIN MEMORY__________________________________________________|",
+    "|                   Press any key to start the next machine cycle or press CTRL + C to exit.                    |"
     };
-
-    printf("%s\n%s\n%s\n", screen[0], screen[1], screen[0]);
+    printf("%s\n", screen[1]);
 
     char s[] = "ld r0, r1"; // --------------------------------------------------------
+    // 113
+    printf("| Executed instruction: %*s|\n", -88, s);
+    printf("%s\n", screen[2]);
+    // 42 57 89 34
+    printf("|%*s R0:%*X | R1:%*X | R2:%*X | R3:%*X |%*s\n", 36, "|", 4, reg[0], 4, reg[1], 4, reg[2], 4, reg[3], 36, "|"); 
 
-    printf("| Executed instruction: %*s|\n", -58, s);
-    printf("%s\n%s\n%s\n", screen[0], screen[2], screen[0]);
+    printf("|%*s MBR:%*X | MAR:%*X | IMM:%*X | PC:%*X |%*s\n", 28, "|", 7, mbr, 7, mar, 7, imm, 7, pc, 29, "|");
+    printf("|%*s IR:%*X | RO0:%*X | RO1:%*X |%*s\n", 40, "|", 4, ir, 4, ro0, 4, ro1, 40, "|");
+    printf("|%*s E:%*X | L:%*X | G:%*X |%*s\n", 41, "|", 5, e, 5, l, 5, g, 41, "|");
 
-    printf("|%*s R0:%*X | R1:%*X | R2:%*X | R3:%*X |%*s\n", 21, "|", 4, reg[0], 4, reg[1], 4, reg[2], 4, reg[3], 21, "|"); 
-
-    printf("|%*s MBR:%*X | MAR:%*X | IMM:%*X | PC:%*X |%*s\n", 13, "|", 7, mbr, 7, mar, 7, imm, 7, pc, 14, "|");
-    printf("|%*s IR:%*X | RO0:%*X | RO1:%*X |%*s\n", 24, "|", 4, ir, 4, ro0, 4, ro1, 26, "|");
-    printf("|%*s E:%*X | L:%*X | G:%*X |%*s\n", 25, "|", 5, e, 5, l, 5, g, 27, "|");
-
-    printf("%s\n%s\n%s\n", screen[0], screen[3], screen[0]);
-
+    printf("|%*s\n%s\n", 112, "|", screen[3]);
     int qtd = 11;
     for (int i = 0; i < SIZE; i++) {
         printf("|%*i:%*X ", 3, i, 4, memory[i]);
@@ -253,5 +256,9 @@ void displayCPUStatus() {
             qtd += 11;
         }
     }
-    printf("\n%s\n%s\n%s\n%s\n", screen[0], screen[4], screen[5], screen[0]);
+    printf("%s\n%s\n%s\n", screen[0], screen[4], screen[0]);
+}
+
+void displayCPUStatus() {
+
 }
