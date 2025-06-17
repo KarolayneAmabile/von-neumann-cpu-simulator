@@ -4,7 +4,9 @@
 
 #include "assembler.h"
 
-unsigned char memory[154] = {0};
+#define SIZE 154
+
+unsigned char memory[SIZE] = {0};
 unsigned int mbr = 0; // Memory Buffer Register
 unsigned short int mar = 0; // Memory Address Register
 unsigned char ir = 0; // Instruction Register
@@ -18,16 +20,17 @@ unsigned short int reg[4]; // General purpose registers
 
 int running = 0;
 
-void printPCStatus();
-
 void fetch();
 void decode();
 void execute();
 
+void displayCPUStatus();
+
 int main(int argc, char **argv) {
+    
     if (argc == 1) {
         printf("Error: No input file specified. Please provide the filename as a command-line argument.\n");
-        printf("Press Enter to exit...\n");
+        printf("Usage: ./program <filename>. Press Enter to exit...\n");
         getchar();
         exit(1);
         return 1;
@@ -38,7 +41,7 @@ int main(int argc, char **argv) {
         fetch();
         decode();
         execute();
-        printPCStatus();
+        displayCPUStatus();
 
         if (running == 1) {
             char r = '\0';
@@ -56,50 +59,6 @@ int main(int argc, char **argv) {
         
     } while (running == 0);
 }
-
-void printPCStatus() {
-    /*==============================[ CPU ]==============================
-| R0:   0 | R1:   0 | R2:   0 | R3:   0 |
-| MBR:  0 | MAR:  0 | IMM:  0 | PC:   0 |
-| IR:   0 | RO0:  0 | RO1:  0 |
-| E:    0 | L:    0 | G:    0 |
-==================================================================*/
-    printf("CPU:\n");
-    printf("R0: %X\t R1: %X\t R2: %X\t R3: %X\n", reg[0], reg[1], reg[2], reg[3]);
-    printf("MBR: %X\t MAR: %X\t IMM: %X\t PC: %X\n", mbr, mar, imm, pc);
-    printf("IR: %X\t RO0: %X\t RO1: %X\n", ir, ro0, ro1);
-    printf("E: %X\t L: %X\t G: %X\n\n", e, l, g);
-
-    /*printf("Memory: \n");
-    for (int i = 0, j = 13; i < 154; i++) {
-        printf("%i: %X    ", i, memory[i]);
-        if (i <= 13) {
-            if (i < 10) {
-                printf("  ");
-            } else {
-                printf(" ");
-            }
-            if (i == j) {
-                printf("\n");
-                j += 14;
-            }
-        } else if (i <= 99) {
-            printf(" ");
-            if (i == j) {
-                printf("\n");
-                j += 14;
-            }
-        } else {
-            if (i == j) {
-                printf("\n");
-                j += 14;
-            }
-        }
-    }*/
-
-    printf("\n\nPressione uma tecla para iniciar o proximo ciclo da maquina "
-            "ou aperte CTRL + C para finalizar a execucao do programa.");
-}   
 
 void fetch() { 
     // instrucao de 1 byte
@@ -254,4 +213,39 @@ void execute() {
         reg[ro0] >> imm;
         pc += 3;
     }
+}
+
+void displayCPUStatus() {
+    char *screen[] = {
+    "| ________________________________________________________________________________|",
+    "|                               CPU SIMULATOR                                     |",
+    "|                                 REGISTERS                                       |",
+    "|                                MAIN MEMORY                                      |",
+    "|                  Press any key to start the next machine cycle                  |",
+    "|                           or press CTRL + C to exit.                            |"
+    };
+
+    printf("%s\n%s\n%s\n", screen[0], screen[1], screen[0]);
+
+    char s[] = "ld r0, r1"; // --------------------------------------------------------
+
+    printf("| Executed instruction: %*s|\n", -58, s);
+    printf("%s\n%s\n%s\n", screen[0], screen[2], screen[0]);
+
+    printf("|%*s R0:%*X | R1:%*X | R2:%*X | R3:%*X |%*s\n", 21, "|", 4, reg[0], 4, reg[1], 4, reg[2], 4, reg[3], 21, "|"); 
+
+    printf("|%*s MBR:%*X | MAR:%*X | IMM:%*X | PC:%*X |%*s\n", 13, "|", 7, mbr, 7, mar, 7, imm, 7, pc, 14, "|");
+    printf("|%*s IR:%*X | RO0:%*X | RO1:%*X |%*s\n", 24, "|", 4, ir, 4, ro0, 4, ro1, 26, "|");
+    printf("|%*s E:%*X | L:%*X | G:%*X |%*s\n", 25, "|", 5, e, 5, l, 5, g, 27, "|");
+
+    printf("%s\n%s\n%s\n", screen[0], screen[3], screen[0]);
+
+    for (int i = 0, j = 7; i < SIZE; i++) {
+        printf("|%*i:%*X ", 3, i, 4, memory[i]);
+        if (i == j) {
+            printf("  |\n");
+            j += 8;
+        }
+    }
+    printf("\n%s\n%s\n%s\n%s\n", screen[0], screen[4], screen[5], screen[0]);
 }
