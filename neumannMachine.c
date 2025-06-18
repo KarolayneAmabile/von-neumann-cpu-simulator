@@ -19,14 +19,15 @@ unsigned char e = 0, l = 0, g = 0; // ‘equal to’, ‘lower than’ and ‘gr
 unsigned short int reg[4] = {0};// General purpose registers
 
 int running = 0;
+int cicles = 0;
+char programLines[200][20] = {0};
 
 void fetch();
 void decode();
 void execute();
 
-void display();
+void getSourceFile(char *filename);
 void displayCPUStatus();
-
 
 int main(int argc, char **argv) {
     
@@ -47,22 +48,22 @@ int main(int argc, char **argv) {
     }
     filename[strcspn(filename, "\n")] = 0;
     loadProgram(filename, memory);
+    getSourceFile(filename);
 
     do {
         fetch();
         decode();
         execute();
+
         displayCPUStatus();
+        cicles++;
 
         if (running == 1) {
             char r = '\0';
-            printf("\n\nPROGRAMA FINALIZADO.\nDeseja executar o mesmo programa novamente? (y/n)");
+            printf("\n\nPROGRAM FINISHED.\nDo you want to run the same program again? (y/n)");
             scanf("%c", &r);
             if (r == 'y' || r == 'Y') {
-                running = 0;
-                pc = 0;
-                    printf("\n\nPressione uma tecla para iniciar o proximo ciclo da maquina "
-                    "ou aperte CTRL + C para finalizar a execucao do programa.");
+                running = 0, pc = 0, cicles = 0;
             }
         }
         getchar();
@@ -226,7 +227,21 @@ void execute() {
     }
 }
 
-void display() {
+void getSourceFile(char *filename) {
+    FILE *program = fopen(filename, "r");
+    if (program == NULL) {
+        exit(1);
+    }
+
+    int size = 0;
+    while (fgets(programLines[size], 30, program)) {
+        programLines[size][strcspn(programLines[size], "\n")] = 0;
+        size++;
+
+    }
+    fclose(program);
+}
+void displayCPUStatus() {
     char *screen[] = {
     "|_______________________________________________________________________________________________________________|",
     "|_________________________________________________CPU SIMULATOR_________________________________________________|",
@@ -236,11 +251,11 @@ void display() {
     };
     printf("%s\n", screen[1]);
 
-    char s[] = "ld r0, r1"; // --------------------------------------------------------
-    // 113
-    printf("| Executed instruction: %*s|\n", -88, s);
+    printf("| Running line: %*s|\n", -96, programLines[cicles]);
+
+    
     printf("%s\n", screen[2]);
-    // 42 57 89 34
+
     printf("|%*s R0:%*X | R1:%*X | R2:%*X | R3:%*X |%*s\n", 36, "|", 4, reg[0], 4, reg[1], 4, reg[2], 4, reg[3], 36, "|"); 
 
     printf("|%*s MBR:%*X | MAR:%*X | IMM:%*X | PC:%*X |%*s\n", 28, "|", 7, mbr, 7, mar, 7, imm, 7, pc, 29, "|");
@@ -257,8 +272,4 @@ void display() {
         }
     }
     printf("%s\n%s\n%s\n", screen[0], screen[4], screen[0]);
-}
-
-void displayCPUStatus() {
-
 }
