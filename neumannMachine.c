@@ -265,7 +265,7 @@ void displayCPUStatus() {
     printf("|%*s\n%s\n", 112, "|", screen[3]);
     int qtd = 11;
     for (int i = 0; i < SIZE; i++) {
-        printf("|%*i:%*X ", 3, i, 4, memory[i]);
+        printf("|%*X:%*X ", 3, i, 4, memory[i]);
         if (i == qtd - 1) {
             printf("  |\n");
             qtd += 11;
