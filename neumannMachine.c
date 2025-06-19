@@ -75,7 +75,7 @@ int main(int argc, char **argv) {
 void fetch() { 
     // instrucao de 1 byte
     mar = pc;
-    mbr = memory[mar++];
+    mbr = memory[mar];
     //printf("%X\n", mbr);
     ir = mbr >> 3;
     if (ir == 0 || ir == 1 || ir == 13) {
@@ -83,14 +83,14 @@ void fetch() {
     }
 
     // instrucao de 2 bytes
-    mbr = (mbr << 8) | memory[mar++];
+    mbr = (mbr << 8) | memory[++mar];
     //printf("%X\n", mbr);
     if (ir >= 2 && ir <= 12) { 
         return;
     }
 
     // instrucao de 3 bytes
-    mbr = (mbr << 8) | memory[mar];
+    mbr = (mbr << 8) | memory[++mar];
     //printf("%X\n", mbr);
 
 }
