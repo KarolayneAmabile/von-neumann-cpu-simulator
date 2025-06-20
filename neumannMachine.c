@@ -128,7 +128,7 @@ void execute() {
         reg[ro0] = reg[ro1];
         pc += 2;
     } else if (ir == 3) { // str
-        reg[ro1] == reg[ro0];
+        reg[ro1] = reg[ro0];
         pc += 2;
     } else if (ir == 4) { // add
         reg[ro0] += reg[ro1];
