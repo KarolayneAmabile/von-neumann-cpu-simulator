@@ -21,12 +21,14 @@ unsigned short int reg[4] = {0};// General purpose registers
 int running = 0;
 int cicles = 0;
 char programLines[200][20] = {0};
+int currentLine = 0;
 
 void fetch();
 void decode();
 void execute();
 
 void getSourceFile(char *filename);
+int getInstruction();
 void displayCPUStatus();
 
 int main(int argc, char **argv) {
@@ -51,6 +53,7 @@ int main(int argc, char **argv) {
     getSourceFile(filename);
 
     do {
+        currentLine = getInstruction();
         fetch();
         decode();
         execute();
@@ -104,7 +107,7 @@ void decode() {
    } else if (ir == 13) {
         ro0 = (mbr & 0x6);
    } else if (ir >= 14 && ir <= 20) {
-        pc = (mbr & 0xffff);
+        mar = (mbr & 0xffff);
    } else if (ir == 21 || ir == 22) {
         ro0 = (mbr & 0x60000) >> 17;
         mar = (mbr & 0xffff);
@@ -162,27 +165,39 @@ void execute() {
     } else if (ir == 14) { // jump if equal to
         if (e == 1) {
             pc = mar;
+            return;
         }
+        pc +=3;
     } else if (ir == 15) { // jump if not equal to
         if (e == 0) {
             pc = mar;
+            return;
         }
+        pc +=3;
     } else if (ir == 16) { // jump if lower than
         if (l == 0) {
             pc = mar;
+            return;
         }
+        pc +=3;
     } else if (ir == 17) { // jump if lower than or equal to
         if (e == 1 || l == 1) {
             pc = mar;
+            return;
         }
+        pc +=3;
     } else if (ir == 18) { // jump if greater than
         if (g == 1) {
             pc = mar;
+            return;
         }
+        pc +=3;
     } else if (ir == 19) { // jump if greater than or equal to
         if (e == 1 || g == 1) {
             pc = mar;
+            return;
         }
+        pc +=3;
     } else if (ir == 20) { // jump
         pc = mar;
     } else if (ir == 21) { // load
@@ -239,7 +254,22 @@ void getSourceFile(char *filename) {
 
     }
     fclose(program);
+    fclose(program);
 }
+
+int getInstruction() {
+    for (int i = 0; i < SIZE; i++) {
+        char tempLine[30];
+        strcpy(tempLine, programLines[i]);
+
+        char *line = strtok(tempLine, ";");
+
+        if (line != NULL && pc == (int)strtol(line, NULL, 16)) {
+            return i;
+        }
+    }
+}
+
 
 void displayCPUStatus() {
     char *screen[] = {
@@ -251,7 +281,7 @@ void displayCPUStatus() {
     };
     printf("%s\n", screen[1]);
 
-    printf("| Running line: %*s|\n", -96, programLines[cicles]);
+    printf("| Running line: %*s|\n", -96, programLines[currentLine]);
 
     
     printf("%s\n", screen[2]);
@@ -262,7 +292,7 @@ void displayCPUStatus() {
     printf("|%*s IR:%*X | RO0:%*X | RO1:%*X |%*s\n", 40, "|", 4, ir, 4, ro0, 4, ro1, 40, "|");
     printf("|%*s E:%*X | L:%*X | G:%*X |%*s\n", 41, "|", 5, e, 5, l, 5, g, 41, "|");
 
-    printf("|%*s\n%s\n", 112, "|", screen[3]);
+    printf("%s\n", screen[3]);
     int qtd = 11;
     for (int i = 0; i < SIZE; i++) {
         printf("|%*X:%*X ", 3, i, 4, memory[i]);
