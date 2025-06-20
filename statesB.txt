@@ -1,0 +1,145 @@
+Programa 2
+
+ciclo 0:  0;i;ld r0, 90(dado - a)
+R0: A     R1:        R2:     R3:
+MBR: A    MAR: 91    IMM:    PC: 3
+IR: 15    RO0: 0     RO1:
+E:        L:         G:
+
+
+ciclo 1:  3;i;ld r1, 92 (dado - 5)
+R0: 0xA // 10    R1: 5      R2:     R3:
+MBR: 5    MAR: 93    IMM:    PC: 6
+IR: 15    RO0: 1     RO1:
+E:        L:         G:
+
+
+ciclo 2:  6;i;div r0, r1
+R0: 2     R1: 5      R2:     R3:
+MBR:3880  MAR: 7     IMM:    PC: 8 
+IR: 7     RO0: 0     RO1: 1
+E:        L:         G:
+
+
+ciclo 3:  8;i;ld r1, 96 (dado - 2)
+R0: 2     R1: 2      R2:     R3:
+MBR: 2    MAR: 97    IMM:    PC: B 
+IR: 15    RO0: 1     RO1: 1
+E:        L:         G:
+
+
+ciclo 4:  b;i;ld r2, 98 (dado - 1)
+R0: 2     R1: 2      R2: 1   R3:
+MBR: 1    MAR: 99    IMM:    PC: E
+IR: 15    RO0: 2     RO1: 1
+E:        L:         G:
+
+
+ciclo 5:  e;i;sub r1, r2
+R0: 2     R1: 1      R2: 1   R3:
+MBR:2B00  MAR: F     IMM:    PC: 10
+IR: 5     RO0: 1     RO1: 2
+E:        L:         G:
+
+
+ciclo 6:  10;i;ld r2, 94 (dado - 3)
+R0: 2     R1: 1      R2: 3   R3:
+MBR: 3    MAR: 95    IMM:    PC: 13
+IR: 15    RO0: 2     RO1: 2
+E:        L:         G:
+
+
+ciclo 7:  13;i;mul r1, r2
+R0: 2     R1: 3      R2: 3   R3:
+MBR:3300  MAR: 14    IMM:    PC: 15
+IR: 6     RO0: 1     RO1: 2
+E:        L:         G:
+
+
+ciclo 8:  15;i;add r0, r1
+R0: 5     R1: 3      R2: 3   R3:
+MBR:2080  MAR: 16    IMM:    PC: 17 
+IR: 4     RO0: 0     RO1: 1
+E:        L:         G:
+
+
+ciclo 9:  17;i;ld r1, 8a (dado - 0)
+R0: 5     R1: 0      R2: 3   R3:
+MBR: 0    MAR: 8B    IMM:    PC: 1A 
+IR: 15    RO0: 0     RO1: 1
+E:        L:         G:
+
+
+ciclo 10: 1a;i;add r0, r1
+R0: 5     R1: 0      R2: 3   R3:
+MBR:2080  MAR: 1B    IMM:    PC: 1C
+IR: 4     RO0: 0     RO1: 1
+E:        L:         G:
+
+
+ciclo 11: 1c;i;st r0, 8a (dado - 0)
+R0: 5     R1: 0      R2: 3   R3:
+MBR: 5    MAR: 8B    IMM:    PC: 1F
+IR: 16    RO0: 0     RO1: 1
+E:        L:         G:
+
+
+
+ciclo 12: if;i;ld r0, 8c (dado 1)
+R0: 1     R1: 0      R2: 3   R3:
+MBR: 1    MAR: 8D    IMM:    PC: 22
+IR: 15    RO0: 0     RO1: 1
+E:        L:         G:
+
+
+ciclo 13: 22;i;ld r1, 8e (dado - a) 
+R0: 1     R1: A      R2: 3   R3:
+MBR: A    MAR: 8F    IMM:    PC: 25
+IR: 15    RO0: 1     RO1: 1
+E:        L:         G:
+
+                           
+ciclo 14: 25;i;addi r0, 1  
+R0: 2      R1: A      R2: 3    R3:
+MBR: 0x1   MAR: 27    IMM: 1   PC: 28 
+IR: 18     RO0: 0     RO1: 1
+E:         L:         G:
+
+
+ciclo 15: 28;i;st r0, 8c (dado - 1)
+R0: 2     R1: A      R2: 3   R3:
+MBR: 2    MAR: 8D    IMM: 1  PC: 2B
+IR: 16    RO0: 0     RO1: 1
+E:        L:         G:
+
+
+ciclo 16: 2b;i;cmp r0, r1
+R0: 2     R1: A      R2: 3   R3:
+MBR: 4080 MAR: 2C    IMM: 1  PC: 2D 
+IR: 8     RO0: 0     RO1: 1
+E: 0      L: 1       G: 0
+
+
+ciclo 17: 2d;i;jle 30
+R0: 2     R1: A      R2: 3   R3:
+MBR: 2    MAR: 30    IMM: 1  PC: 30
+IR: 11    RO0: 0     RO1: 1
+E: 0      L: 1       G: 0
+
+
+ciclo 18: 30;ihlt
+R0:       R1:        R2:     R3:
+MBR:      MAR:       IMM:    PC: 
+IR:       RO0:       RO1:
+E:        L:         G:
+
+
+
+
+
+
+
+
+
+
+

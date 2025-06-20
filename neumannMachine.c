@@ -163,35 +163,28 @@ void execute() {
         if (e == 1) {
             pc = mar;
         }
-        pc += 3;
     } else if (ir == 15) { // jump if not equal to
         if (e == 0) {
             pc = mar;
         }
-        pc += 3;
     } else if (ir == 16) { // jump if lower than
         if (l == 0) {
             pc = mar;
         }
-        pc += 3;
     } else if (ir == 17) { // jump if lower than or equal to
         if (e == 1 || l == 1) {
             pc = mar;
         }
-        pc += 3;
     } else if (ir == 18) { // jump if greater than
         if (g == 1) {
             pc = mar;
         }
-        pc += 3;
     } else if (ir == 19) { // jump if greater than or equal to
         if (e == 1 || g == 1) {
             pc = mar;
         }
-        pc += 3;
     } else if (ir == 20) { // jump
         pc = mar;
-        pc += 3;
     } else if (ir == 21) { // load
         mbr = memory[mar++];
         mbr = (mbr << 8) | memory[mar];
@@ -247,6 +240,7 @@ void getSourceFile(char *filename) {
     }
     fclose(program);
 }
+
 void displayCPUStatus() {
     char *screen[] = {
     "|_______________________________________________________________________________________________________________|",
