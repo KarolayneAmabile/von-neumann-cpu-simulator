@@ -143,9 +143,9 @@ void execute() {
         reg[ro0] /= reg[ro1];
         pc += 2;
     } else if (ir == 8) { // cmp
-        e = reg[ro0] = reg[ro1] ? 1 : 0;
-        l = reg[ro0] < reg[ro1] ? 1 : 0;
-        g = reg[ro0] > reg[ro1] ? 1 : 0;
+        e = (reg[ro0] = reg[ro1]) ? 1 : 0;
+        l = (reg[ro0] < reg[ro1]) ? 1 : 0;
+        g = (reg[ro0] > reg[ro1]) ? 1 : 0;
         pc += 2;
     } else if (ir == 9) { // movr
         reg[ro0] = reg[ro1];
@@ -232,11 +232,11 @@ void execute() {
         pc += 3;
     } else if (ir == 28) { // left shift
         mbr = imm;
-        reg[ro0] << mbr;
+        reg[ro0] <<= mbr;
         pc += 3;
     } else if (ir == 29) { // right shift
         mbr = imm;
-        reg[ro0] >> mbr;
+        reg[ro0] >>= mbr;
         pc += 3;
     }
 }
