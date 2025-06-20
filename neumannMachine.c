@@ -197,32 +197,38 @@ void execute() {
         mbr = (mbr << 8) | memory[mar];
         reg[ro0] = mbr;
         pc += 3;
-
     } else if (ir == 22) { // store
         mbr = reg[ro0];
         memory[mar] = mbr >> 8;
         memory[++mar] = mbr & 0xff;
         pc += 3;
     } else if (ir == 23) { // move immediate
-        reg[ro0] = imm;
+        mbr = imm;
+        reg[ro0] = mbr;
         pc += 3;
     } else if (ir == 24) { // add immediate
-        reg[ro0] += imm;
+        mbr = imm;
+        reg[ro0] += mbr;
         pc += 3;
     } else if (ir == 25) { // subtract immediate
-        reg[ro0] -= imm;
+        mbr = imm;
+        reg[ro0] -= mbr;
         pc += 3;
     } else if (ir == 26) { // multiply immediate
-        reg[ro0] *= imm;
+        mbr = imm;
+        reg[ro0] *= mbr;
         pc += 3;
     } else if (ir == 27) { // divide immediate
-        reg[ro0] /= imm;
+        mbr = imm;
+        reg[ro0] /= mbr;
         pc += 3;
     } else if (ir == 28) { // left shift
-        reg[ro0] << imm;
+        mbr = imm;
+        reg[ro0] << mbr;
         pc += 3;
     } else if (ir == 29) { // right shift
-        reg[ro0] >> imm;
+        mbr = imm;
+        reg[ro0] >> mbr;
         pc += 3;
     }
 }
