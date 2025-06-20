@@ -175,7 +175,7 @@ void execute() {
         }
         pc +=3;
     } else if (ir == 16) { // jump if lower than
-        if (l == 0) {
+        if (l == 1) {
             pc = mar;
             return;
         }
