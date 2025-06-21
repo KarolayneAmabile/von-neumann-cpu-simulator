@@ -15,7 +15,7 @@ e;i;sub r1, r2
 25;i;addi r0, 1
 28;i;st r0, 8c
 2b;i;cmp r0, r1
-2d;i;jmp 17
+2d;i;jle 30
 30;i;hlt
 8a;d;0
 8c;d;1

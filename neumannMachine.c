@@ -85,7 +85,7 @@ int main(int argc, char **argv) {
                 return 0;
             }
         }
-        getch();
+        getchar();
         system("cls");
         
     } while (running == 0);
@@ -303,7 +303,7 @@ void displayCPUStatus() {
     "|_________________________________________________CPU SIMULATOR_________________________________________________|",
     "|___________________________________________________REGISTERS___________________________________________________|",
     "|__________________________________________________MAIN MEMORY__________________________________________________|",
-    "|                   Press any key to start the next machine cycle or press CTRL + C to exit.                    |"
+    "|                   Press Enter to start the next machine cycle or press CTRL + C to exit.                      |"
     };
     printf("%s\n", screen[1]);
 
