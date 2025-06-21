@@ -5,8 +5,8 @@
 void loadProgram(char *filename, unsigned char *memory);
 int getOpcode(char *mnemonic);
 
-
 void loadProgram(char *filename, unsigned char *memory) {
+    // abre o arquivo
     FILE* program;
     program = fopen(filename, "r");
     if (program == NULL) {
@@ -16,15 +16,15 @@ void loadProgram(char *filename, unsigned char *memory) {
         exit(1);
     }
 
-    char str[100];
-    char *tokens[5];
-    char error[100];
-    int line = 0;
-    int memoryAddress = 0;
-    int word = 0;
+    char str[100]; // buffer pra armazenar cada linha
+    char *tokens[5]; // um array de "string" dos pedaços da instrucao
+    char error[100]; // uma copia da linha de instrucao para impressao de erro, caso haja
+    int line = 0; // linha que esta sendo executa no momento
+    int memoryAddress = 0; // endereco no qual a palavra/dado deve ser armazenado
+    unsigned int word = 0; // a palavra de instrucao/dados em binario 
 
     while (fgets(str, sizeof(str), program) != NULL) { 
-        strcpy(error, str);
+        strcpy(error, str); 
         int wordPosition = 0;
         char *token = strtok(str, "; ,\n");
 
@@ -33,20 +33,22 @@ void loadProgram(char *filename, unsigned char *memory) {
             token = strtok(NULL, "; ,\n"); 
         }        
 
+        // esse tipo de comando converte direto a string de dados em base hex pra int
         memoryAddress = (int)strtol(tokens[0], NULL, 16);
 
+        // caso seja uma linha de dados
         if (strcmp(tokens[1], "d") == 0) { 
             int data = (int)strtol(tokens[2], NULL, 16);
             memory[memoryAddress] = data >> 8;
             memory[++memoryAddress] = data & 0xff;
-        } else if (strcmp(tokens[1], "i") == 0) { 
+        } else if (strcmp(tokens[1], "i") == 0) { // caso seja uma instrucao
             word = getOpcode(tokens[2]);
             if (word == 0) { 
                 memory[memoryAddress] = 0;
             } else if (word == 1) {
                 memory[memoryAddress] = 1;
-            } else if (word >= 2 && word <= 12) {
-                word = word << 2;
+            } else if (word >= 2 && word <= 12) { // agrupamos da mesma forma que fizemos na
+                word = word << 2;                 // funcao main em decode()
 
                 int rX = atoi(tokens[3] + 1);
                 word = (word | rX) << 2;
@@ -72,8 +74,8 @@ void loadProgram(char *filename, unsigned char *memory) {
                 memory[memoryAddress] = word >> 16;
                 memory[++memoryAddress] = (word & 0xff00) >> 8;
                 memory[++memoryAddress] = (word & 0xff);
-            } else if (word >= 21 && word <= 29) {
-                word = word << 2;
+            } else if (word >= 21 && word <= 29) { // mas aqui podemos agrupar o ld e st junto as
+                word = word << 2;                  // demais instrucoes que usam imm
 
                 int reg = atoi(tokens[3] + 1);
                 word = (word | reg) << 17;                  

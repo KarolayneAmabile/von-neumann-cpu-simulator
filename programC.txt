@@ -1,7 +1,0 @@
-0;i;movi r0, 1 
-3;i;addi r0, 9
-6;i;subi r0, 2
-9;i;multi r0, 2
-12;i;divi r0, 4
-15;i;lsh r0, 1
-18;i;lsh r0, 2

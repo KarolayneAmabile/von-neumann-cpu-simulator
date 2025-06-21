@@ -1,6 +1,6 @@
 # Simulador de CPU - Arquitetura e Organização de Computadores
 
-Este projeto visa implementar um simulador de uma CPU baseada na arquitetura de von Neumann, a fim de melhor compreender o funcionamento interno de um processaodor. O simulador executa programas escritos em um formato binário simples, o ciclo da Máquina de Von Neumann que pode ser descrito nas operações: **busca**, **decodifica** e **excecuta**. Ao final de cada ciclo, o estado da CPU e da memória são exibido no terminal, aguardando que o usuário pressione uma tecla para prosseguir.
+Este projeto visa implementar um simulador de uma CPU baseada na arquitetura de von Neumann, a fim de melhor compreender o funcionamento interno de um processador. O simulador executa programas escritos em um formato binário simples, o ciclo da Máquina de Von Neumann que pode ser descrito nas operações: **busca**, **decodifica** e **executa**. Ao final de cada ciclo, o estado da CPU e da memória são exibido no terminal, aguardando que o usuário pressione uma tecla para prosseguir.
 
 ---
 
@@ -239,6 +239,53 @@ Em caso de erro, o programa exibe mensagens informativas indicando a linha onde 
 - `lsh` → Deslocamento à esquerda.  
 - `rsh` → Deslocamento à direita.
 
+
+## Formato do Arquivo de Programa (.txt)
+
+Os programas a serem carregados na memória da CPU devem ser escritos em um arquivo de texto (`.txt`), obedecendo a seguinte estrutura por linha:
+
+```
+[MEMORY_ADDRESS];[TYPE];[CONTENT]
+```
+
+### Onde:
+
+- **`MEMORY_ADDRESS`**:  
+  Endereço de memória (em hexadecimal) onde o conteúdo será armazenado.
+
+- **`TYPE`**:  
+  Indica o tipo de linha:  
+  - **`d`** → Linha de **dado**  
+  - **`i`** → Linha de **instrução**
+
+- **`CONTENT`**:  
+  - Se for um dado (`d`): Um valor hexadecimal a ser armazenado na memória.  
+  - Se for uma instrução (`i`): O opcode (em formato de mnemônico, ex.: `ld`, `add`, `jmp`) seguido dos operandos necessários.
+
+---
+
+### Exemplos:
+
+#### Exemplo de linha com dado:
+
+```
+8A;d;0A
+```
+> Armazena o valor `0A` (hexadecimal) na posição de memória `8A`.
+
+#### Exemplo de linha com instrução:
+
+```
+00;i;ld r0, 8A
+```
+> Instrução para carregar (`ld`) o conteúdo da posição de memória `8A` no registrador `r0`, sendo armazenada a partir da posição `00` na memória.
+
+- Cada linha do programa **representa uma posição específica da memória**.  
+- Instruções são convertidas para o formato binário correto pelo assembler do programa antes de serem carregadas.  
+- Linhas mal formatadas ou com tipos desconhecidos (qualquer coisa diferente de `i` ou `d`) causarão erro de sintaxe na leitura.
+
+---
+
 ## Creditos
 
-Este projeto foi desenvolvido para a disciplina de Arquitetura e Organização de Computadores I do curso de Bacharelado em Ciências da Computação do Instituto Federal de Educação, Ciência e Tecnologia de Goiás - Campus Anápolis. Projeto idealizado Prof. Dr. Eng. Hugo Vinícius Leão e Silva e desenvolvido pelas alunas Karolayne Amábile Brito Borges e [Ana Laura Machado Pereira](https://github.com/aanalaura). 
+Este projeto foi desenvolvido para a disciplina de Arquitetura e Organização de Computadores I do curso de Bacharelado em Ciências da Computação do Instituto Federal de Educação, Ciência e Tecnologia de Goiás - Campus Anápolis. Projeto idealizado Prof. Dr. Eng. [Hugo Vinícius Leão e Silva](https://www.escavador.com/sobre/5606654/hugo-vinicius-leao-e-silva) e desenvolvido pelas alunas [Karolayne Amábile Brito Borges](https://github.com/KarolayneAmabile) e [Ana Laura Machado Pereira](https://github.com/aanalaura). 

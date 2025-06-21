@@ -7,6 +7,12 @@
 
 #define SIZE 154
 
+/*atencao: comentarios que possuem o marcador <> indicam que aquele trecho, linha
+ou funcao esta presente no codigo meramente para auxiliar no controle ou realizar
+a impressao no formato certo em tela e pode ser ignorado */
+
+
+// REGISTRADORES INTERNOS A CPU:
 unsigned char memory[SIZE] = {0};
 unsigned int mbr = 0; // Memory Buffer Register
 unsigned short int mar = 0; // Memory Address Register
@@ -15,24 +21,27 @@ unsigned char ro0 = 0, ro1 = 0; // Register Operand 0 and 1
 unsigned short int imm = 0; // Immediate
 unsigned short int pc = 0; // Program Counter
 unsigned char e = 0, l = 0, g = 0; // ‘equal to’, ‘lower than’ and ‘greater than’
-
 unsigned short int reg[4] = {0};// General purpose registers
 
+// <> variaveis de controle do restante do codigo, que nao pertecem a cpu
 int running = 0;
 int cicles = 0;
 char programLines[200][20] = {0};
 int currentLine = 0;
 
+// FUNCOES QUE EXECUTAM O CICLO DA MAQUINA DE VON NEUMANN:
 void fetch();
 void decode();
 void execute();
 
+//<> funcoes para impressao
 void getSourceFile(char *filename);
 int getInstruction();
 void displayCPUStatus();
 
 int main(int argc, char **argv) {
-    
+    // <> o nome do programa pode ser passado diretamente pela linha de comando,
+    // <> ou em tempo de execucao
     char filename[300];
     if (argc == 1) {
         printf("Please type the name of the .txt file: ");
@@ -49,17 +58,22 @@ int main(int argc, char **argv) {
 
     }
     filename[strcspn(filename, "\n")] = 0;
+
+    // funcao que traduz o codigo fonte para binario e o carrega na memoria principal
     loadProgram(filename, memory);
+
+    // <> funcao auxiliar, que obtem as strings que compoe a instrucao para imprimir na tela
     getSourceFile(filename);
 
+    // loop que executa o ciclo da maquina de von Neumann
     do {
-        currentLine = getInstruction();
+        currentLine = getInstruction(); //<>
         fetch();
         decode();
         execute();
 
-        displayCPUStatus();
-        cicles++;
+        displayCPUStatus(); // <>
+        cicles++; // <>
 
         if (running == 1) {
             char r = '\0';
@@ -76,29 +90,36 @@ int main(int argc, char **argv) {
 }
 
 void fetch() { 
-    // instrucao de 1 byte
-    mar = pc;
+    mar = pc; // atualiza o mar para a instrucao atual
     mbr = memory[mar];
-    //printf("%X\n", mbr);
-    ir = mbr >> 3;
-    if (ir == 0 || ir == 1 || ir == 13) {
-        return;
+    ir = mbr >> 3; // extrai o opcode
+
+    // para instrucoes de 1 byte
+    if (ir == 0 || ir == 1 || ir == 13) { 
+        return; 
     }
 
-    // instrucao de 2 bytes
+    // para instrucoes de 2 bytes
     mbr = (mbr << 8) | memory[++mar];
-    //printf("%X\n", mbr);
     if (ir >= 2 && ir <= 12) { 
-        return;
+        return; 
     }
 
-    // instrucao de 3 bytes
+    // para instrucoes de 3 bytes
     mbr = (mbr << 8) | memory[++mar];
-    //printf("%X\n", mbr);
 
 }
 
 void decode() {
+    // as instrucoes sao agrupadas de acordo com a quantidade de bytes que possuem
+    // e os registradores que alteram; como instrucoes similares estao agrupadas de
+    // maneira continua, fica ainda mais facil
+
+    // a extracao de bytes eh realizada atraves do deslocamento de bytes a esquerda
+    // ou a direita ou por meio do uso de "mascaras" com operacoes bitwise or/and
+
+    // a instrucao hlt nao participa, pois ela necessariamente nao deve alterar o
+    // conteudo de nenhum registrador
    if (ir == 1) {
         pc++;
    } else if (ir >= 2 && ir <= 12) {
@@ -111,17 +132,16 @@ void decode() {
    } else if (ir == 21 || ir == 22) {
         ro0 = (mbr & 0x60000) >> 17;
         mar = (mbr & 0xffff);
-
-        //printf("ro0 %X\n", ro0);
-        //printf("mar %X\n", mar);
    } else {
         ro0 = (mbr & 0x60000) >> 17;
         imm = (mbr & 0xffff);
-
    }
 }
 
 void execute() {
+    // executa as instrucoes a partir dos registradores modificados na etapa de decodificacao
+    // a instrucao nop nao esta abaixo, pois sua unica funcao e incrementar o registrador pc
+
     if (ir == 0) { // hlt
         running = 1;
     } else if (ir == 2) { // ldr
@@ -241,6 +261,8 @@ void execute() {
     }
 }
 
+// <> possui a funcao de copiar o codigo fonte para o array programLines,
+// a fim de serem impressas a cada ciclo para melhor vizualizacao
 void getSourceFile(char *filename) {
     FILE *program = fopen(filename, "r");
     if (program == NULL) {
@@ -254,9 +276,10 @@ void getSourceFile(char *filename) {
 
     }
     fclose(program);
-    fclose(program);
 }
 
+// <> possui a funcao de extrair o indice da instrucao da linha qual
+// o registrador pc esta apontando
 int getInstruction() {
     for (int i = 0; i < SIZE; i++) {
         char tempLine[30];
@@ -270,7 +293,7 @@ int getInstruction() {
     }
 }
 
-
+// <> imprime o estado da cpu, com todos os seus registradores e a memoria RAM
 void displayCPUStatus() {
     char *screen[] = {
     "|_______________________________________________________________________________________________________________|",
