@@ -81,12 +81,15 @@ int main(int argc, char **argv) {
             scanf("%c", &r);
             if (r == 'y' || r == 'Y') {
                 running = 0, pc = 0, cicles = 0;
+            } else {
+                return 0;
             }
         }
-        getchar();
+        getch();
         system("cls");
         
     } while (running == 0);
+    return 0;
 }
 
 void fetch() { 
